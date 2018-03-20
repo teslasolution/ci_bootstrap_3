@@ -1,25 +1,36 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 /**
-* Name:  Ion Auth
-*
-* Version: 2.5.2
-*
-* Author: Ben Edmunds
-*		  ben.edmunds@gmail.com
-*         @benedmunds
-*
-* Added Awesomeness: Phil Sturgeon
-*
-* Location: http://github.com/benedmunds/CodeIgniter-Ion-Auth
-*
-* Created:  10.01.2009
-*
-* Description:  Modified auth system based on redux_auth with extensive customization.  This is basically what Redux Auth 2 should be.
-* Original Author name has been kept but that does not mean that the method has not been modified.
-*
-* Requirements: PHP5 or above
-*
-*/
+ * Name:    Ion Auth
+ * Author:  Ben Edmunds
+ *           ben.edmunds@gmail.com
+ *           @benedmunds
+ *
+ * Added Awesomeness: Phil Sturgeon
+ *
+ * Created:  10.01.2009
+ *
+ * Description:  Modified auth system based on redux_auth with extensive customization. This is basically what Redux Auth 2 should be.
+ * Original Author name has been kept but that does not mean that the method has not been modified.
+ *
+ * Requirements: PHP5.6 or above
+ *
+ * @package    CodeIgniter-Ion-Auth
+ * @author     Ben Edmunds
+ * @link       http://github.com/benedmunds/CodeIgniter-Ion-Auth
+ * @filesource
+ */
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+/*
+ | -------------------------------------------------------------------------
+ | Database group name option.
+ | -------------------------------------------------------------------------
+ | Allows to select a specific group for the database connection
+ |
+ | Default is empty: uses default group defined in CI's configuration
+ | (see application/config/database.php, $active_group variable)
+ */
+$config['database_group_name'] = 'default';
 
 /*
 | -------------------------------------------------------------------------
@@ -43,30 +54,23 @@ $config['join']['groups'] = 'group_id';
 
 /*
  | -------------------------------------------------------------------------
- | Hash Method (sha1 or bcrypt)
+ | Hash Method (only bcrypt is supported for now)
  | -------------------------------------------------------------------------
  | Bcrypt is available in PHP 5.3+
  |
- | IMPORTANT: Based on the recommendation by many professionals, it is highly recommended to use
- | bcrypt instead of sha1.
- |
- | NOTE: If you use bcrypt you will need to increase your password column character limit to (80)
- |
- | Below there is "default_rounds" setting.  This defines how strong the encryption will be,
- | but remember the more rounds you set the longer it will take to hash (CPU usage) So adjust
+ | Below there is "bcrypt_cost" setting.  This defines how strong the encryption will be.
+ | However, higher the cost, longer it will take to hash (CPU usage) So adjust
  | this based on your server hardware.
  |
- | If you are using Bcrypt the Admin password field also needs to be changed in order to login as admin:
- | $2y$: $2y$08$200Z6ZZbp3RAEXoaWcMA6uJOFicwNZaqk4oDhqTUiFXFe63MG.Daa
- | $2a$: $2a$08$6TTcWD1CJ8pzDy.2U3mdi.tpl.nYOR1pwYXwblZdyQd9SL16B7Cqa
+ | You can (and should!) benchmark your server. This can be done easily with this little script:
+ | https://gist.github.com/Indigo744/24062e07477e937a279bc97b378c3402
  |
- | Be careful how high you set max_rounds, I would do your own testing on how long it takes
- | to encrypt with x rounds.
+ | With bcrypt, the "password" password is:
+ | $2y$08$200Z6ZZbp3RAEXoaWcMA6uJOFicwNZaqk4oDhqTUiFXFe63MG.Daa
  |
- | salt_prefix: Used for bcrypt. Versions of PHP before 5.3.7 only support "$2a$" as the salt prefix
- | Versions 5.3.7 or greater should use the default of "$2y$".
  */
-$config['hash_method']    = 'bcrypt';	// sha1 or bcrypt, bcrypt is STRONGLY recommended
+$config['hash_method']    	= 'bcrypt';	// only bcrypt is supported for now
+$config['bcrypt_default_cost']	= 9;		// Set cost according to your serveur benchmark
 $config['default_rounds'] = 8;		// This does not apply if random_rounds is set to true
 $config['random_rounds']  = FALSE;
 $config['min_rounds']     = 5;
@@ -94,15 +98,15 @@ $config['manual_activation']          = FALSE;               // Manual Activatio
 $config['remember_users']             = TRUE;                // Allow users to be remembered and enable auto-login
 $config['user_expire']                = 86500;               // How long to remember the user (seconds). Set to zero for no expiration
 $config['user_extend_on_login']       = FALSE;               // Extend the users cookies every time they auto-login
-$config['track_login_attempts']       = FALSE;               // Track the number of failed login attempts for each user or ip.
+$config['track_login_attempts']       = TRUE;                // Track the number of failed login attempts for each user or ip.
 $config['track_login_ip_address']     = TRUE;                // Track login attempts by IP Address, if FALSE will track based on identity. (Default: TRUE)
 $config['maximum_login_attempts']     = 3;                   // The maximum number of failed login attempts.
-$config['lockout_time']               = 600;                 // The number of seconds to lockout an account due to exceeded attempts
-$config['forgot_password_expiration'] = 0;                   // The number of milliseconds after which a forgot password request will expire. If set to 0, forgot password requests will not expire.
+$config['lockout_time']               = 600;                 /* The number of seconds to lockout an account due to exceeded attempts
+																You should not use a value below 60 (1 minute) */
+$config['forgot_password_expiration'] = 0;                   // The number of seconds after which a forgot password request will expire. If set to 0, forgot password requests will not expire.
 $config['recheck_timer']              = 0;                   /* The number of seconds after which the session is checked again against database to see if the user still exists and is active.
-							           Leave 0 if you don't want session recheck. if you really think you need to recheck the session against database, we would
-								   recommend a higher value, as this would affect performance */
-								
+																Leave 0 if you don't want session recheck. if you really think you need to recheck the session against database, we would
+																recommend a higher value, as this would affect performance */
 
 /*
  | -------------------------------------------------------------------------
@@ -154,28 +158,6 @@ $config['email_forgot_password'] = 'forgot_password.tpl.php';
 
 /*
  | -------------------------------------------------------------------------
- | Forgot Password Complete Email Template
- | -------------------------------------------------------------------------
- | Default: new_password.tpl.php
- */
-$config['email_forgot_password_complete'] = 'new_password.tpl.php';
-
-/*
- | -------------------------------------------------------------------------
- | Salt options
- | -------------------------------------------------------------------------
- | salt_length Default: 22
- |
- | store_salt: Should the salt be stored in the database?
- | This will change your password encryption algorithm,
- | default password, 'password', changes to
- | fbaa5e216d163a02ae630ab1a43372635dd374c0 with default salt.
- */
-$config['salt_length'] = 22;
-$config['store_salt']  = FALSE;
-
-/*
- | -------------------------------------------------------------------------
  | Message Delimiters.
  | -------------------------------------------------------------------------
  */
@@ -184,6 +166,3 @@ $config['message_start_delimiter'] = '<p>'; 	// Message start delimiter
 $config['message_end_delimiter']   = '</p>'; 	// Message end delimiter
 $config['error_start_delimiter']   = '<p>';		// Error message start delimiter
 $config['error_end_delimiter']     = '</p>';	// Error message end delimiter
-
-/* End of file ion_auth.php */
-/* Location: ./application/config/ion_auth.php */

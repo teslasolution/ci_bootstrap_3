@@ -56,7 +56,7 @@
 				<li><a href="#update_user">update_user()</a></li>
 				<li><a href="#delete_user">delete_user()</a></li>
 				<li><a href="#forgotten_password">forgotten_password()</a></li>
-				<li><a href="#forgotten_password_complete">forgotten_password_complete()</a></li>
+				<li><a href="#forgotten_password_check">forgotten_password_check()</a></li>
 				<li><a href="#logged_in">logged_in()</a></li>
 				<li><a href="#is_admin">is_admin()</a></li>
 				<li><a href="#in_group">in_group()</a></li>
@@ -187,9 +187,6 @@ Documentation
 		<li>$config['email_templates']</li>
 		<li>$config['email_activate']</li>
 		<li>$config['email_forgot_password']</li>
-		<li>$config['email_forgot_password_complete'] </li>
-		<li>$config['salt_length']</li>
-		<li>$config['store_salt'] </li>
 		<li>$config['forgot_password_expiration'] </li>
 		<li>$config['track_login_attempts'] </li>
 		<li>$config['maximum_login_attempts'] </li>
@@ -230,9 +227,6 @@ Documentation
 		<li>'email_templates' -  Folder where the email view templates are stored. DEFAULT is 'auth/email/'.</li>
 		<li>'email_activate' -  Filname of the email activation view template. DEFAULT is 'activate.tpl.php'.</li>
 		<li>'email_forgot_password' -  Filname of the forgot password email view template. DEFAULT is 'forgot_password.tpl.php'.</li>
-		<li>'email_forgot_password_complete' -  Filname of the forgot password complete email view template. DEFAULT is 'new_password.tpl.php'.</li>
-		<li>'salt_length' -  Length of the encryption salt. DEFAULT is '10'.</li>
-		<li>'store_salt' -  TRUE or FALSE.  Store the salt in a separate database column or not. This can be useful for integrating with existing apps. DEFAULT is 'false'.</li>
 		<li>'forgot_password_expiration' - Number of seconds before a forgot password request expires. If set to 0, requests will not expire. DEFAULT is 0.</li>
 		<li>'track_login_attempts' - Track the number of failed login attempts for each user or ip. DEFAULT is 'false'.</li>
 		<li>'maximum_login_attempts' - Set the maximum number of failed login attempts. This maximum is not enforced by the library, but is
@@ -436,9 +430,9 @@ Documentation
 	</pre>
 	<br />
 
-	<a name="forgotten_password_complete"></a>
-	<h2>forgotten_password_complete()</h2>
-	<p>Final step of resetting a users password.  The user comes to this page from their email.</p>
+	<a name="forgotten_password_check"></a>
+	<h2>forgotten_password_check()</h2>
+	<p>Check to see if the forgotten password code is valid.</p>
 
 	<p><strong>Parameters</strong></p>
 	<ol>
@@ -447,24 +441,15 @@ Documentation
 
 	<p><strong>Return</strong></p>
 	<ul>
-		<li>string.  The users new password.</li>
+		<li>object / bool. Returns the user record if valid, return FALSE if invalid.</li>
 	</ul>
 
 	<p><b>Usage</b></p>
 	<pre>
-		//Working code for this example is in the example Auth controller in the github repo
-		public function reset_password($code)
+		$user = $this->ion_auth->forgotten_password_check($code);
+		if ($user)
 		{
-			$reset = $this->ion_auth->forgotten_password_complete($code);
-
-			if ($reset) {  //if the reset worked then send them to the login page
-				$this->session->set_flashdata('message', $this->ion_auth->messages());
-				redirect("auth/login", 'refresh');
-			}
-			else { //if the reset didnt work then send them back to the forgot password page
-				$this->session->set_flashdata('message', $this->ion_auth->errors());
-				redirect("auth/forgot_password", 'refresh');
-			}
+			//display the password reset form
 		}
 	</pre>
 	<br />
@@ -776,7 +761,6 @@ Documentation
 				[ip_address] => 127.0.0.1
 				[username] => administrator
 				[password] => 59beecdf7fc966e2f17fd8f65a4a9aeb09d4a3d4
-				[salt] => 9462e8eee0
 				[email] => admin@admin.com
 				[activation_code] => 19e181f2ccc2a7ea58a2c0aa2b69f4355e636ef4
 				[forgotten_password_code] => 81dce1d0bc2c10fbdec7a87f1ff299ed7e4c9e4a

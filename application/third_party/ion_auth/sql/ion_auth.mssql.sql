@@ -3,8 +3,7 @@ CREATE TABLE users (
     ip_address varchar(45) NOT NULL,
     username varchar(100) NULL,
     password varchar(255) NOT NULL,
-    salt varchar(255),
-    email varchar(100) NOT NULL,
+    email varchar(254) NOT NULL,
     activation_code varchar(40),
     forgotten_password_code varchar(40),
     forgotten_password_time int,
@@ -49,8 +48,8 @@ INSERT INTO groups (id, name, description) VALUES (2,'members','General User');
 SET IDENTITY_INSERT groups OFF;
 
 SET IDENTITY_INSERT users ON;
-INSERT INTO users (id, ip_address, username, password, salt, email, activation_code, forgotten_password_code, created_on, last_login, active, first_name, last_name, company, phone)
-	VALUES ('1','127.0.0.1','administrator','$2a$07$SeBknntpZror9uyftVopmu61qg0ms8Qv1yV6FG.kQOSM.9QhmTo36','','admin@admin.com','',NULL, DATEDIFF(s, '19700101', GETDATE()), DATEDIFF(s, '19700101', GETDATE()),'1','Admin','istrator','ADMIN','0');
+INSERT INTO users (id, ip_address, username, password, email, activation_code, forgotten_password_code, created_on, last_login, active, first_name, last_name, company, phone)
+	VALUES ('1','127.0.0.1','administrator','$2y$08$200Z6ZZbp3RAEXoaWcMA6uJOFicwNZaqk4oDhqTUiFXFe63MG.Daa','admin@admin.com','',NULL, DATEDIFF(s, '19700101', GETDATE()), DATEDIFF(s, '19700101', GETDATE()),'1','Admin','istrator','ADMIN','0');
 SET IDENTITY_INSERT users OFF;
 
 SET IDENTITY_INSERT users_groups ON;
@@ -60,9 +59,9 @@ SET IDENTITY_INSERT users_groups OFF;
 
 CREATE TABLE login_attempts (
     id int NOT NULL IDENTITY(1,1),
-    ip_address varchar(15),
+    ip_address varchar(45),
     login varchar(100) NOT NULL,
-	time datetime,
+	time int,
   PRIMARY KEY(id),
   CONSTRAINT login_attempts_check_id CHECK(id >= 0)
 );

@@ -1,8 +1,8 @@
-#
-# TABLE STRUCTURE FOR: groups
-#
-
 DROP TABLE IF EXISTS `groups`;
+
+#
+# Table structure for table 'groups'
+#
 
 CREATE TABLE `groups` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
@@ -11,36 +11,26 @@ CREATE TABLE `groups` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
+#
+# Dumping data for table 'groups'
+#
+
 INSERT INTO `groups` (`id`, `name`, `description`) VALUES ('1', 'members', 'General User');
 
 
-#
-# TABLE STRUCTURE FOR: login_attempts
-#
-
-DROP TABLE IF EXISTS `login_attempts`;
-
-CREATE TABLE `login_attempts` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `ip_address` varchar(15) NOT NULL,
-  `login` varchar(100) NOT NULL,
-  `time` int(11) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-#
-# TABLE STRUCTURE FOR: users
-#
 
 DROP TABLE IF EXISTS `users`;
 
+#
+# Table structure for table 'users'
+#
+
 CREATE TABLE `users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `ip_address` varchar(15) NOT NULL,
-  `username` varchar(100) DEFAULT NULL,
+  `ip_address` varchar(45) NOT NULL,
+  `username` varchar(100) NULL,
   `password` varchar(255) NOT NULL,
-  `salt` varchar(255) DEFAULT NULL,
-  `email` varchar(100) NOT NULL,
+  `email` varchar(254) NOT NULL,
   `activation_code` varchar(40) DEFAULT NULL,
   `forgotten_password_code` varchar(40) DEFAULT NULL,
   `forgotten_password_time` int(11) unsigned DEFAULT NULL,
@@ -55,22 +45,45 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `salt`, `email`, `activation_code`, `forgotten_password_code`, `forgotten_password_time`, `remember_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `company`, `phone`) VALUES ('1', '127.0.0.1', 'member', '$2y$08$kkqUE2hrqAJtg.pPnAhvL.1iE7LIujK5LZ61arONLpaBBWh/ek61G', NULL, 'member@member.com', NULL, NULL, NULL, NULL, '1451903855', '1451905011', '1', 'Member', 'One', NULL, NULL);
-
 
 #
-# TABLE STRUCTURE FOR: users_groups
+# Dumping data for table 'users'
 #
+
+INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `email`, `activation_code`, `forgotten_password_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `company`, `phone`) VALUES ('1', '127.0.0.1', 'member', '$2y$08$kkqUE2hrqAJtg.pPnAhvL.1iE7LIujK5LZ61arONLpaBBWh/ek61G', 'member@member.com', '',NULL,'1268889823','1268889823','1', 'Member', 'One','Member','0');
+
 
 DROP TABLE IF EXISTS `users_groups`;
+
+#
+# Table structure for table 'users_groups'
+#
 
 CREATE TABLE `users_groups` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
   `group_id` mediumint(8) unsigned NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `fk_users_groups_users1_idx` (`user_id`),
+  KEY `fk_users_groups_groups1_idx` (`group_id`),
+  CONSTRAINT `uc_users_groups` UNIQUE (`user_id`, `group_id`),
+  CONSTRAINT `fk_users_groups_users1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `fk_users_groups_groups1` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 INSERT INTO `users_groups` (`id`, `user_id`, `group_id`) VALUES ('1', '1', '1');
 
 
+DROP TABLE IF EXISTS `login_attempts`;
+
+#
+# Table structure for table 'login_attempts'
+#
+
+CREATE TABLE `login_attempts` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `ip_address` varchar(45) NOT NULL,
+  `login` varchar(100) NOT NULL,
+  `time` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
