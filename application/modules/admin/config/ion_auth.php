@@ -16,7 +16,7 @@
  * 	- $config['email_forgot_password'] = 'forgot_password.php'; (default: 'forgot_password.tpl.php')
  * 	- $config['email_forgot_password_complete']	= 'new_password.php'; (default: new_password.tpl.php)
  */
-
+$config['database_group_name'] = 'default';
 /*
 | -------------------------------------------------------------------------
 | Tables.
