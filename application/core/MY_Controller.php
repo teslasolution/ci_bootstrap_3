@@ -213,6 +213,7 @@ class MY_Controller extends MX_Controller {
 		$this->mViewData['base_url'] = $this->mBaseUrl;
 		$this->mViewData['menu'] = $this->mMenu;
 		$this->mViewData['user'] = $this->mUser;
+                $this->mViewData['user_group'] = $this->mUserMainGroup;
 		$this->mViewData['ga_id'] = empty($this->mConfig['ga_id']) ? '' : $this->mConfig['ga_id'];
 		$this->mViewData['body_class'] = $this->mBodyClass;
 
