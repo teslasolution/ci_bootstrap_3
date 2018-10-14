@@ -13,13 +13,13 @@ class User extends Admin_Controller {
 	public function index()
 	{
 		$crud = $this->generate_crud('users');
-		$crud->columns('groups', 'username', 'email', 'first_name', 'last_name', 'active');
+		$crud->columns('type', 'username', 'email', 'first_name', 'last_name', 'active');
 		$this->unset_crud_fields('ip_address', 'last_login');
 
 		// only webmaster and admin can change member groups
 		if ($crud->getState()=='list' || $this->ion_auth->in_group(array('webmaster', 'admin')))
 		{
-			$crud->set_relation_n_n('groups', 'users_groups', 'groups', 'user_id', 'group_id', 'name');
+			$crud->set_relation_n_n('type', 'users_groups', '`groups`', 'user_id', 'group_id', 'name');
 		}
 
 		// only webmaster and admin can reset user password

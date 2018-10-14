@@ -20,13 +20,13 @@ class Panel extends Admin_Controller {
 	public function admin_user()
 	{
 		$crud = $this->generate_crud('admin_users');
-		$crud->columns('groups', 'username', 'first_name', 'last_name', 'active');
+		$crud->columns('type', 'username', 'first_name', 'last_name', 'active');
 		$this->unset_crud_fields('ip_address', 'last_login');
 
 		// cannot change Admin User groups once created
 		if ($crud->getState()=='list')
 		{
-			$crud->set_relation_n_n('groups', 'admin_users_groups', 'admin_groups', 'user_id', 'group_id', 'name');
+			$crud->set_relation_n_n('type', 'admin_users_groups', 'admin_groups', 'user_id', 'group_id', 'name');
 		}
 
 		// only webmaster can reset Admin User password
